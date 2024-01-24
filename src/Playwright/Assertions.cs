@@ -9,4 +9,6 @@ public static class Assertions
     public static IPageAssertions Expect(IPage page) => new PageAssertions(page, false);
 
     public static IAPIResponseAssertions Expect(IAPIResponse response) => new APIResponseAssertions(response, false);
+
+    public static IPoller Expect() => new Poller();
 }

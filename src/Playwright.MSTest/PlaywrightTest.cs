@@ -135,4 +135,6 @@ public class PlaywrightTest
     public IPageAssertions Expect(IPage page) => Assertions.Expect(page);
 
     public IAPIResponseAssertions Expect(IAPIResponse response) => Assertions.Expect(response);
+
+    public IPoller Expect() => new Poller();
 }

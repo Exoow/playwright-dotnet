@@ -22,36 +22,15 @@
  * SOFTWARE.
  */
 
+using System;
 using System.Threading.Tasks;
-using Microsoft.Playwright.Core;
-using Microsoft.Playwright.TestAdapter;
-using NUnit.Framework;
 
-namespace Microsoft.Playwright.NUnit;
-
-public class PlaywrightTest : WorkerAwareTest
+namespace Microsoft.Playwright
 {
-    public string BrowserName { get; internal set; } = null!;
-
-    private static readonly Task<IPlaywright> _playwrightTask = Microsoft.Playwright.Playwright.CreateAsync();
-
-    public IPlaywright Playwright { get; private set; } = null!;
-    public IBrowserType BrowserType { get; private set; } = null!;
-
-    [SetUp]
-    public async Task PlaywrightSetup()
+    public interface IPoller
     {
-        Playwright = await _playwrightTask.ConfigureAwait(false);
-        BrowserName = PlaywrightSettingsProvider.BrowserName;
-        BrowserType = Playwright[BrowserName];
-        Playwright.Selectors.SetTestIdAttribute("data-testid");
+        IPollAssertions<T> Poll<T>(Func<Task<T>> pollFunction);
+
+        IPollAssertions<T> Poll<T>(Func<T> pollFunction);
     }
-
-    public ILocatorAssertions Expect(ILocator locator) => Assertions.Expect(locator);
-
-    public IPageAssertions Expect(IPage page) => Assertions.Expect(page);
-
-    public IAPIResponseAssertions Expect(IAPIResponse response) => Assertions.Expect(response);
-
-    public IPoller Expect() => new Poller();
 }

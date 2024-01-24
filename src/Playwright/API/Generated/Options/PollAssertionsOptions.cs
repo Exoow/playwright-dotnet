@@ -22,36 +22,33 @@
  * SOFTWARE.
  */
 
-using System.Threading.Tasks;
-using Microsoft.Playwright.Core;
-using Microsoft.Playwright.TestAdapter;
-using NUnit.Framework;
+#nullable enable
 
-namespace Microsoft.Playwright.NUnit;
+using System.Collections.Generic;
 
-public class PlaywrightTest : WorkerAwareTest
+namespace Microsoft.Playwright;
+
+public class PollAssertionsOptions
 {
-    public string BrowserName { get; internal set; } = null!;
+    public PollAssertionsOptions() { }
 
-    private static readonly Task<IPlaywright> _playwrightTask = Microsoft.Playwright.Playwright.CreateAsync();
-
-    public IPlaywright Playwright { get; private set; } = null!;
-    public IBrowserType BrowserType { get; private set; } = null!;
-
-    [SetUp]
-    public async Task PlaywrightSetup()
+    public PollAssertionsOptions(PollAssertionsOptions clone)
     {
-        Playwright = await _playwrightTask.ConfigureAwait(false);
-        BrowserName = PlaywrightSettingsProvider.BrowserName;
-        BrowserType = Playwright[BrowserName];
-        Playwright.Selectors.SetTestIdAttribute("data-testid");
+        if (clone == null)
+        {
+            return;
+        }
+
+        Timeout = clone.Timeout;
     }
 
-    public ILocatorAssertions Expect(ILocator locator) => Assertions.Expect(locator);
+    /// <summary><para>Maximum duration of the poll in milliseconds. Defaults to <c>5000</c>.</para></summary>
+    public int? Timeout { get; set; }
 
-    public IPageAssertions Expect(IPage page) => Assertions.Expect(page);
-
-    public IAPIResponseAssertions Expect(IAPIResponse response) => Assertions.Expect(response);
-
-    public IPoller Expect() => new Poller();
+    /// <summary>
+    /// Backoff intervals for the poll. Defaults to [100, 250, 500, 1000].
+    /// </summary>
+    public IEnumerable<int>? Intervals { get; set; }
 }
+
+#nullable disable
